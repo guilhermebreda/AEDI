@@ -1,3 +1,4 @@
+# Importando bibliotecas streamlit, numpy, pandas e plotly
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -35,13 +36,18 @@ desvio_demanda_mensal = desvio_demanda_anual / 100 / np.sqrt(12)
 # Função de Simulação de Monte Carlo Mensal
 def simular_aluguel_mensal(valor_inicial, meses, simulacoes, media_inflacao_mensal, desvio_inflacao_mensal, media_demanda_mensal, desvio_demanda_mensal):
     trajetorias = np.zeros((simulacoes, meses))
+
     for i in range(simulacoes):
         valor = valor_inicial
         for mes in range(meses):
+            # Gerar uma taxa de inflação aleatória para o mês
             taxa_inflacao = np.random.normal(media_inflacao_mensal, desvio_inflacao_mensal)
+            # Gerar uma taxa de demanda aleatória para o mês
             taxa_demanda = np.random.normal(media_demanda_mensal, desvio_demanda_mensal)
+            # Aplicar essas taxas ao valor do aluguel para o mês atual
             valor *= (1 + taxa_inflacao + taxa_demanda)
             trajetorias[i, mes] = valor
+    
     return trajetorias
 
 # Executando a Simulação
