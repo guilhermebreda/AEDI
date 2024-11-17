@@ -1,9 +1,6 @@
 streamlit
-numpy
 pandas
+numpy
 plotly
 yfinance
 scipy
-seaborn
-PIL
-subprocess

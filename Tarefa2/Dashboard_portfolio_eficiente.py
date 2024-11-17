@@ -1,30 +1,13 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ![MARCADOR.png](attachment:MARCADOR.png)
-
-# # BI - Distribuições de Probabilidade
-
-# ## Bibliotecas
-
-# In[8]:
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import yfinance as yf
 from scipy.stats import norm
-import seaborn as sns
+#import seaborn as sns
 import plotly.graph_objects as go
-from PIL import Image
-import subprocess
+#from PIL import Image
 
-
-# ### Dashboard
-
-# In[22]:
 
 
 def load_data(tickers, start_date, end_date):
@@ -95,31 +78,29 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Carregar as logos
-#logo_unb = Image.open("Logo/MARCADOR.png")
 
-# Título e Logos
-col1, col2, col3 = st.columns([1, 6, 1])
-#with col1:
-#    st.image(logo_unb, use_column_width=True)
-with col2:
-    st.markdown("<h1 style='text-align: center; color: #003366;'>Teoria do Portfólio Eficiente</h1>", 
-                unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; color: #003366;'>Professor João Gabriel de Moraes Souza</h3>", 
-                unsafe_allow_html=True)  # Inserir nome do professor
-#with col3:
-#    st.image(logo_unb, use_column_width=True)
+#st.markdown("<h1 style='text-align: center;'>Teoria do Portfólio Eficiente</h1>", 
+#            unsafe_allow_html=True)
+
+st.markdown("<h1 style='text-align: center;'>Análise de Carteira de Ações</h1>", 
+            unsafe_allow_html=True)
+
+st.markdown("<h3 style='text-align: center;'>Aluno: Guilherme Breda Rezende</h3>", 
+            unsafe_allow_html=True)  # Inserir nome aluno
+
+st.markdown("<h3 style='text-align: center;'>Professor João Gabriel de Moraes Souza</h3>", 
+            unsafe_allow_html=True)  # Inserir nome do professor # color: #003366
 
 st.markdown("---")
 
 tickers = st.multiselect('Selecione as ações:', ['ELET3.SA', 'PETR3.SA', 'TOTS3.SA', 'VALE3.SA', 
-                                                 'WEGE3.SA'], 
-                         default=['ELET3.SA'])
+                                                 'WEGE3.SA', 'BOVA11.SA'], 
+                         default=['ELET3.SA', 'PETR3.SA', 'TOTS3.SA', 'VALE3.SA', 'WEGE3.SA', 'BOVA11.SA'])
 
 
 
 
-start_date = st.date_input('Data de Início', value=pd.to_datetime('2012-01-01'))
+start_date = st.date_input('Data de Início', value=pd.to_datetime('2014-11-11'))
 end_date = st.date_input('Data de Fim', value=pd.to_datetime('2024-11-11')) #aaaa-mm-dd
 
 data = load_data(tickers, start_date, end_date)
@@ -139,9 +120,9 @@ if st.checkbox('Mostrar Histórico de Retorno das Ações'):
 
 # Adicionando seletores para o número de portfólios e valor inicial de investimento
 num_ports = st.selectbox('Selecione o número de portfólios para a simulação:', 
-                         [100, 1000, 10000], index=2)
+                         [100, 1000, 10000, 50000, 100000], index=3)
 valor_inicial = st.number_input('Valor Inicial de Investimento:', min_value=1000, 
-                                max_value=100000, value=10000, step=1000)    
+                                max_value=100000, value=35000, step=1000)    
 
 global max_sr_ret, max_sr_vol  # Definindo variáveis globais    
     
@@ -278,10 +259,4 @@ if 'max_sr_ret' in globals() and 'max_sr_vol' in globals():
 else:
     st.warning("Realize a simulação do portfólio para calcular o VaR.")
 
-
-# In[23]:
-
-
-# Converte o notebook 'Dashboard_Distribuições.ipynb' para um script Python
-subprocess.run(["jupyter", "nbconvert", "--to", "script", "Dashboard_portfolio_eficiente.ipynb"])
 
