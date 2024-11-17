@@ -87,8 +87,10 @@ st.markdown("---")
 
 # selecao acoes
 tickers = st.multiselect('Selecione as ações:', ['ELET3.SA', 'PETR3.SA', 'TOTS3.SA', 'VALE3.SA', 
-                                                 'WEGE3.SA', 'BOVA11.SA'], 
-                         default=['ELET3.SA', 'PETR3.SA', 'TOTS3.SA', 'VALE3.SA', 'WEGE3.SA', 'BOVA11.SA'])
+                                                 'WEGE3.SA'],
+                         default=['ELET3.SA', 'PETR3.SA', 'TOTS3.SA', 'VALE3.SA', 'WEGE3.SA'])
+
+# 'BOVA11.SA'
 
 # selecao datas
 start_date = st.date_input('Data de Início', value=pd.to_datetime('2014-11-11'))
@@ -160,9 +162,20 @@ if st.checkbox('Mostrar Pesos do Melhor Portfólio'):
         'Peso (%)': pesos_percentuais
     })
 
-    # Exibindo o DataFrame com st.table para uma visualização estática
-    st.write("### Pesos do Melhor Portfólio")
-    st.dataframe(df_pesos.style.format({'Peso (%)': '{:.2f}%'}))
+    # Criando colunas para layout
+    col1, col2 = st.columns([1, 1])  # Configura duas colunas com tamanhos iguais
+
+    # Exibindo o DataFrame na primeira coluna
+    with col1:
+        st.write("### Pesos do Melhor Portfólio")
+        st.dataframe(df_pesos.style.format({'Peso (%)': '{:.2f}%'}))
+
+    # Exibindo o gráfico de pizza/donut na segunda coluna
+    with col2:
+        st.write("### Distribuição dos Pesos na Carteira")
+        fig_pizza = px.pie(df_pesos, names='Ativo', values='Peso (%)', title='Distribuição de Pesos no Portfólio')
+        fig_pizza.update_traces(hole=0.4, hoverinfo="label+percent+value")  # Torna o gráfico do tipo "donut"
+        st.plotly_chart(fig_pizza)
 
 # Carregando os dados e executando a função de alocação de ativos
 if st.button('Performance Portfólio'):
