@@ -4,9 +4,7 @@ import numpy as np
 import plotly.express as px
 import yfinance as yf
 from scipy.stats import norm
-#import seaborn as sns
 import plotly.graph_objects as go
-#from PIL import Image
 
 
 
@@ -78,28 +76,21 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-
-#st.markdown("<h1 style='text-align: center;'>Teoria do Portfólio Eficiente</h1>", 
-#            unsafe_allow_html=True)
-
+## cabeçalho
 st.markdown("<h1 style='text-align: center;'>Análise de Carteira de Ações</h1>", 
             unsafe_allow_html=True)
-
 st.markdown("<h3 style='text-align: center;'>Aluno: Guilherme Breda Rezende</h3>", 
-            unsafe_allow_html=True)  # Inserir nome aluno
-
+            unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center;'>Professor João Gabriel de Moraes Souza</h3>", 
-            unsafe_allow_html=True)  # Inserir nome do professor # color: #003366
-
+            unsafe_allow_html=True)
 st.markdown("---")
 
+# selecao acoes
 tickers = st.multiselect('Selecione as ações:', ['ELET3.SA', 'PETR3.SA', 'TOTS3.SA', 'VALE3.SA', 
                                                  'WEGE3.SA', 'BOVA11.SA'], 
                          default=['ELET3.SA', 'PETR3.SA', 'TOTS3.SA', 'VALE3.SA', 'WEGE3.SA', 'BOVA11.SA'])
 
-
-
-
+# selecao datas
 start_date = st.date_input('Data de Início', value=pd.to_datetime('2014-11-11'))
 end_date = st.date_input('Data de Fim', value=pd.to_datetime('2024-11-11')) #aaaa-mm-dd
 
