@@ -143,8 +143,6 @@ if st.checkbox('Realizar Simulação de Portfólio'):
     # Definir a taxa livre de risco
     risk_free_rate = 0.03  # 3% ao ano
 
-
-    # adição 17/11/24
     from scipy.optimize import minimize
 
     # Função para calcular a volatilidade (risco) para um dado peso
@@ -182,10 +180,6 @@ if st.checkbox('Realizar Simulação de Portfólio'):
     
 
 
-
-
-
-
     max_sr_loc = sharpe_arr.argmax()
     max_sr_ret = ret_arr[max_sr_loc]
     max_sr_vol = vol_arr[max_sr_loc]
@@ -202,8 +196,6 @@ if st.checkbox('Realizar Simulação de Portfólio'):
     cml_vol = np.linspace(0, max(vol_arr), 100)
     cml_ret = risk_free_rate + (max_sr_ret - risk_free_rate) / max_sr_vol * cml_vol
 
-
-    # adição 17/11/24
     # Adicionar a Fronteira Eficiente como linha pontilhada
     figura_port.add_scatter(
         x=frontier_vol, 
@@ -213,7 +205,6 @@ if st.checkbox('Realizar Simulação de Portfólio'):
         name='Fronteira Eficiente'
     )
 
-    # adição 17/11/24
     # Adicionar a Linha de Mercado de Capitais ao Gráfico
     figura_port.add_scatter(
         x=cml_vol,
@@ -223,8 +214,6 @@ if st.checkbox('Realizar Simulação de Portfólio'):
         name='Linha de Mercado de Capitais (CML)'
     )
 
-
-    # adição 17/11/24
     # Ajustar legenda e barra de cores
     figura_port.update_layout(
         #height=700,  # Aumentar altura do gráfico
@@ -244,7 +233,7 @@ if st.checkbox('Realizar Simulação de Portfólio'):
 
     st.plotly_chart(figura_port)
 
-    # Após a simulação de portfólio e identificação dos melhores pesos
+# Após a simulação de portfólio e identificação dos melhores pesos
 if st.checkbox('Mostrar Pesos do Melhor Portfólio'):
     # Organizando os pesos em um DataFrame para melhor visualização
     ativos = data.columns  # Pegando os nomes dos ativos selecionados
