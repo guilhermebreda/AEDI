@@ -7,7 +7,6 @@ from scipy.stats import norm
 import plotly.graph_objects as go
 
 
-
 def load_data(tickers, start_date, end_date):
     data = pd.DataFrame()
     for ticker in tickers:
@@ -137,7 +136,56 @@ if st.checkbox('Realizar Simulação de Portfólio'):
         
         all_weights[x, :] = weights
         ret_arr[x], vol_arr[x], sharpe_arr[x] = get_ret_vol_sr(weights, log_ret)
+
+
+
+    # adição 17/11/24
+    # Definir a taxa livre de risco
+    risk_free_rate = 0.03  # 3% ao ano
+
+
+    # adição 17/11/24
+    from scipy.optimize import minimize
+
+    # Função para calcular a volatilidade (risco) para um dado peso
+    def get_vol(weights, log_ret):
+        return np.sqrt(np.dot(weights.T, np.dot(log_ret.cov() * 252, weights)))
     
+    # Limites de pesos: cada peso deve estar entre 0 (0%) e 1 (100%)
+    bounds = [(0, 1) for _ in range(len(data.columns))]
+
+    # Definir uma série de níveis de retorno esperado
+    frontier_ret = np.linspace(ret_arr.min(), ret_arr.max(), 100)
+    frontier_vol = []
+
+    # Restrição para a soma dos pesos e retorno esperado
+    for target_ret in frontier_ret:
+        constraints = (
+            {'type': 'eq', 'fun': check_sum},  # Soma dos pesos = 1
+            {'type': 'eq', 'fun': lambda w: np.sum(w * log_ret.mean() * 252) - target_ret}  # Retorno esperado = target_ret
+        )
+
+        # Otimização para minimizar a volatilidade
+        result = minimize(
+            get_vol, 
+            len(data.columns) * [1. / len(data.columns)], 
+            args=(log_ret,), 
+            method='SLSQP', 
+            bounds=bounds, 
+            constraints=constraints
+        )
+
+        if result.success:
+            frontier_vol.append(result.fun)  # Adicionar volatilidade mínima para esse retorno
+        else:
+            frontier_vol.append(None)  # Em caso de falha na otimização
+    
+
+
+
+
+
+
     max_sr_loc = sharpe_arr.argmax()
     max_sr_ret = ret_arr[max_sr_loc]
     max_sr_vol = vol_arr[max_sr_loc]
@@ -147,6 +195,53 @@ if st.checkbox('Realizar Simulação de Portfólio'):
                              labels={'x': 'Volatilidade', 'y': 'Retorno'}, title='Simulação de Portfólio')
     figura_port.add_scatter(x=[max_sr_vol], y=[max_sr_ret], marker=dict(color='red', size=20), 
                             name='Melhor Sharpe Ratio')
+    
+
+    # adição 17/11/24
+    # Calcular a Linha de Mercado de Capitais
+    cml_vol = np.linspace(0, max(vol_arr), 100)
+    cml_ret = risk_free_rate + (max_sr_ret - risk_free_rate) / max_sr_vol * cml_vol
+
+
+    # adição 17/11/24
+    # Adicionar a Fronteira Eficiente como linha pontilhada
+    figura_port.add_scatter(
+        x=frontier_vol, 
+        y=frontier_ret, 
+        mode='lines',
+        line=dict(color='blue', dash='dot', width=2),
+        name='Fronteira Eficiente'
+    )
+
+    # adição 17/11/24
+    # Adicionar a Linha de Mercado de Capitais ao Gráfico
+    figura_port.add_scatter(
+        x=cml_vol,
+        y=cml_ret,
+        mode='lines',
+        line=dict(color='green', dash='solid', width=2),
+        name='Linha de Mercado de Capitais (CML)'
+    )
+
+
+    # adição 17/11/24
+    # Ajustar legenda e barra de cores
+    figura_port.update_layout(
+        #height=700,  # Aumentar altura do gráfico
+        legend=dict(
+            x=1.05,  # Legenda fora do gráfico
+            y=1,
+            orientation="v"
+        ),
+        coloraxis_colorbar=dict(
+            len=0.5,           # Reduzir tamanho da barra de cores
+            yanchor="middle",  # Centralizar verticalmente
+            y=0.5
+        ),
+        margin=dict(l=40, r=20, t=40, b=20)  # Ajustar margens
+    )
+
+
     st.plotly_chart(figura_port)
 
     # Após a simulação de portfólio e identificação dos melhores pesos
@@ -262,5 +357,3 @@ if 'max_sr_ret' in globals() and 'max_sr_vol' in globals():
     st.plotly_chart(fig)
 else:
     st.warning("Realize a simulação do portfólio para calcular o VaR.")
-
-
