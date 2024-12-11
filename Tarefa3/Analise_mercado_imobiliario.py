@@ -90,9 +90,6 @@ plt.show()
 
 
 
-# Garantir que não haja valores ausentes nas colunas analisadas
-filtered_data = housing_data[['Bedroom AbvGr', 'MS Zoning', 'Overall Cond', 'SalePrice']].dropna()
-
 # Função para realizar ANOVA e visualização
 def anova_analysis(df, feature, target='SalePrice'):
     groups = df.groupby(feature)[target]
